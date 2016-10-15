@@ -1,4 +1,7 @@
-import numbers, reprlib
+import numbers
+from reprlib import recursive_repr
+
+
 class TimeSeries:
     '''This is the TimeSeries class implemented using Python.
        The TimeSeries class can store a single, ordered set of numerical data.
@@ -26,4 +29,8 @@ class TimeSeries:
         '''Set the data to the input value at the position specified by index.
         '''
         self._time_series[index] = value
+
+    @recursive_repr()
+    def __repr__(self):
+        return '<' + '|'.join(map(repr, self)) + '>'
 
