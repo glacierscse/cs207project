@@ -5,6 +5,8 @@ class TimeSeries:
     def __len__(self):
         return len(data)
 
-    def __getitem__():
-
-    def __setitem__():
+    def __getitem__(self,index):
+        return data[index]
+        
+    def __setitem__(self,index,item):
+        return data[index] = item
