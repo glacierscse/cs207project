@@ -25,7 +25,7 @@ class TestTimeSeries(unittest.TestCase):
         input = [1]
         TimeSeries(input)
 
-    def test_
+    #def test_
     #your constructor, which should take one mandatory argument which represents 
     #data to fill the time series instance with. 
     #This argument should be any object that can be treated like a sequence. 
