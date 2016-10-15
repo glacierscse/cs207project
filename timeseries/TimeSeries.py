@@ -10,3 +10,5 @@ class TimeSeries:
         
     def __setitem__(self,index,value):
         return data[index] = value
+
+    def __str__(self):
