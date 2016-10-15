@@ -1,4 +1,5 @@
 class TimeSeries:
+    # TimeSeries class	
     def __init__(self,data):
         self.timeSeries = data
 
