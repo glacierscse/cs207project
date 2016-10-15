@@ -23,3 +23,5 @@ class TimeSeries:
 	return data[index] = value
 
     def __str__(self):
+    '''Return a string representation of the timeseries data
+    '''
