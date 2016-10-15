@@ -32,5 +32,6 @@ class TimeSeries:
 
     @recursive_repr()
     def __repr__(self):
-        return '<' + '|'.join(map(repr, self)) + '>'
+        class_name = type(self).__name__
+        return class_name + '(' + ', '.join(map(repr, self)) + ')'
 
