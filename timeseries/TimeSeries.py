@@ -1,3 +1,4 @@
+import numbers, reprlib
 class TimeSeries:
     '''This is the TimeSeries class implemented using Python.
        The TimeSeries class can store a single, ordered set of numerical data.
@@ -6,20 +7,23 @@ class TimeSeries:
 	'''The constructor should take the initial sequence-like data to fill the time series.
 	'''
         self.timeSeries = data
-
+    
     def __len__(self):
 	'''Get the length of the timeseries data.
 	'''
-        return len(data)
+        return len(self._time_series)
 
     def __getitem__(self,index):
 	'''Get the data at the position specified by index. 
 	'''
-        return data[index]
-        
+        cls = type(self)
+        if isinstance(index, slice):
+            return cls(self._time_series[index])
+        elif isinstance(index, numbers.Integral):
+            return self._time_series[index]
+    
     def __setitem__(self,index,value):
         '''Set the data to the input value at the position specified by index.
 	'''
-	return data[index] = value
+        self._time_series[index] = value
 
-    def __str__(self):
