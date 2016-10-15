@@ -8,6 +8,7 @@ class TimeSeries:
     '''
     def __init__(self,data):
         '''The constructor should take the initial sequence-like data to fill the time series.
+           The sequence-like data can have length 0, but must be given.
         '''
         self._time_series = data
     
@@ -31,6 +32,8 @@ class TimeSeries:
         self._time_series[index] = value
 
     @recursive_repr()
+        '''Return formal string representation of the timeseries data.
+        '''
     def __repr__(self):
         class_name = type(self).__name__
         return class_name + '(' + ', '.join(map(repr, self)) + ')'
