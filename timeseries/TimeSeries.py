@@ -37,6 +37,7 @@ class TimeSeries:
         self._time_series[index] = pair
 
     @recursive_repr()
+    #not complete
     def __repr__(self):
         '''Return formal string representation of the timeseries data.
         '''
@@ -47,7 +48,9 @@ class TimeSeries:
         limit_len = 5
         len_data = len(self._time_series)
         if len_data <= limit_len:
-            return str(self._time_series)
+            str_part1 = ", ".join(str(item) for item in self._time_series)
+            return "[" + str_part1 + "]" 
+            #return str(self._time_series)
         else:
             str_part1 = ", ".join(str(item) for item in self._time_series[0:limit_len])
             return "[" + str_part1 + " ... " + str(self._time_series[-1]) + "]" 
@@ -68,8 +71,64 @@ class TimeSeries:
         for item in self._time_series:
             yield item
 
-    #def values(self):
-     #   return np.array(self._value)
+    def values(self):
+        return self._value
+
+    def interpolate(self, inter_time):
+        inter_values = []
+        for ti in inter_time:
+            if ti < self._key[0]:
+                inter_values.append(self._value[0])
+            
+            elif ti > self._key[-1]:
+                inter_values.append(self._value[-1])
+            
+            else:
+                left, right = self._binary_search(self._key, ti)
+                if left == right:
+                    inter_values.append(self._value[left])
+                else:
+                    slope = (self._value[right] - self._value[left]) / (self._key[right]- self._key[left])
+                    pred_value = (ti- self._key[left])*slope + self._value[left]
+                    inter_values.append(pred_value)
+
+        result = TimeSeries(inter_values, inter_time)
+        return result
+
+    def _binary_search(self, arr, target):
+        if len(arr) == 0: 
+            return -1 
+        lo = 0
+        hi = len(arr)-1
+        while lo <= hi: 
+            mid = lo+(hi-lo)//2
+            if target < arr[mid]:
+                hi = mid - 1
+            elif target > arr[mid]:
+                lo = mid + 1
+            else: 
+                return mid, mid
+        return hi, lo
+
+
+
+
+
+class ArrayTimeSeries(TimeSeries):
+    def __init__(self, time, data):
+        self._key = np.array(time)
+        self._value = np.array(data)
+        self._time_series = np.array(list(zip(time, data)))
+
+    #def __len__(self):
+    #    return self._value.shape[0]
+
+
+    #def __getitem__(self, index):
+    
+
+
+    #def __setitem__(self, index, pair):
 
 
 
