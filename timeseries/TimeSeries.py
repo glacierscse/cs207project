@@ -2,6 +2,7 @@ import numbers
 import reprlib
 import numpy as np
 import sys
+from lazy import LazyOperation
 
 class TimeSeries:
     '''This is the TimeSeries class implemented using Python.
@@ -21,7 +22,7 @@ class TimeSeries:
         if len(self._value) != len(self._key):
             raise Exception('The length of time input has to be equal to the length of value input')
         #self._time_series = list(zip(self._key, self._value))
-    
+  
     def __len__(self):
         '''Get the length of the timeseries data.
         '''
@@ -136,6 +137,12 @@ class TimeSeries:
             return True
         else:
             return False
+
+    #@property
+    #def lazy(function):
+    #    def create_thunk(*args, **kwargs):
+    #        return LazyOperation(function, *args, **kwargs)
+    #    return create_thunk
 
 
 class ArrayTimeSeries(TimeSeries):
