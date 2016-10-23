@@ -1,6 +1,8 @@
 import numbers
 from reprlib import recursive_repr
 import numpy as np
+import sys
+
 class TimeSeries:
     '''This is the TimeSeries class implemented using Python.
        The TimeSeries class can store a single, ordered set of numerical data.
@@ -9,13 +11,16 @@ class TimeSeries:
         '''The constructor should take the initial sequence-like data to fill the time series.
            The sequence-like data can have length 0, but must be given.
         '''
+        ##the time has to be in order when pass in -- precondtion
         len_data = len(data)
         if time == None:
             self._key = list(range(len_data))
         else:
             self._key = time
         self._value = data
-        self._time_series = list(zip(self._key, self._value))
+        if len(self._value) != len(self._key):
+            raise Exception('The length of time input has to be equal to the length of value input')
+        #self._time_series = list(zip(self._key, self._value))
     
     def __len__(self):
         '''Get the length of the timeseries data.
@@ -27,14 +32,15 @@ class TimeSeries:
         '''
         cls = type(self)
         if isinstance(index, slice):
-            return cls(self._time_series[index])
+            return cls(self._value[index],self._key[index])
         elif isinstance(index, numbers.Integral):
-            return self._time_series[index]
+            return (self._key[index],self._value[index])
     
-    def __setitem__(self, index, pair):
+    def __setitem__(self, index, val):
         '''Set the data to the input value at the position specified by index.
         '''
-        self._time_series[index] = pair
+        #pass in only the value. We can't change the time -- precondition
+        self._value[index] = val
 
     @recursive_repr()
     #not complete
@@ -46,14 +52,15 @@ class TimeSeries:
         
     def __str__(self):
         limit_len = 5
-        len_data = len(self._time_series)
+        len_data = len(self._value)
+        time_series = list(zip(self._key,self._value))
         if len_data <= limit_len:
-            str_part1 = ", ".join(str(item) for item in self._time_series)
+            str_part1 = ", ".join(str(item) for item in time_series)
             return "[" + str_part1 + "]" 
             #return str(self._time_series)
         else:
-            str_part1 = ", ".join(str(item) for item in self._time_series[0:limit_len])
-            return "[" + str_part1 + " ... " + str(self._time_series[-1]) + "]" 
+            str_part1 = ", ".join(str(item) for item in time_series[0:limit_len])
+            return "[" + str_part1 + " ... " + str(time_series[-1]) + "]" 
 
     def __iter__(self):
         for val in self._value:
@@ -68,7 +75,8 @@ class TimeSeries:
             yield time
 
     def iteritems(self):
-        for item in self._time_series:
+        time_series = zip(self._key, self._value)
+        for item in time_series:
             yield item
 
     def values(self):
@@ -111,14 +119,24 @@ class TimeSeries:
         return hi, lo
 
 
-
+    def __eq__(self, other):
+        if type(self) != type(other):
+            return False
+        if len(self) != len(other):
+            return False
+        if self._value == other._value and self._key == other._key:
+            return True
+        else:
+            return False
 
 
 class ArrayTimeSeries(TimeSeries):
     def __init__(self, time, data):
+        if len(time) != len(data):
+            raise Exception('The length of time input has to be equal to the length of value input')
         self._key = np.array(time)
         self._value = np.array(data)
-        self._time_series = np.array(list(zip(time, data)))
+        #self._time_series = np.array(list(zip(time, data)))
 
     #def __len__(self):
     #    return self._value.shape[0]
