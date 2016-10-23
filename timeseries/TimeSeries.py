@@ -6,11 +6,12 @@ from lazy import LazyOperation
 
 class TimeSeries:
     '''This is the TimeSeries class implemented using Python.
-       The TimeSeries class can store a single, ordered set of numerical data.
+       The TimeSeries class can store time series data.
     '''
     def __init__(self, data, time = None):
         '''The constructor should take the initial sequence-like data to fill the time series.
            The sequence-like data can have length 0, but must be given.
+           Time is an optional argument.
         '''
         ##the time has to be in order when pass in -- precondtion
         len_data = len(data)
@@ -43,9 +44,7 @@ class TimeSeries:
         #pass in only the value. We can't change the time -- precondition
         self._value[index] = val
 
-    
-    '''Return formal string representation of the timeseries data.
-    '''
+ 
     #@recursive_repr()
     #not complete
     #def __repr__(self):
@@ -54,12 +53,18 @@ class TimeSeries:
     #    class_name = type(self).__name__
     #    return class_name + '(' + ', '.join(map(repr, self)) + ')'
     def __repr__(self):
+        '''Return formal string representation of the timeseries data.
+        '''
         time_series = list(zip(self._key, self._value))
         components = reprlib.repr(time_series)
         components = components[components.find('['):]
         return 'TimeSeries({})'.format(components)
 
     def __str__(self):
+        '''Return a string representation of the timeseries data.
+           If the data length exceed the length limit, 
+           the function will present part of the time series.
+        '''
         limit_len = 5
         len_data = len(self._value)
         time_series = list(zip(self._key,self._value))
@@ -72,29 +77,43 @@ class TimeSeries:
             return "[" + str_part1 + " ... " + str(time_series[-1]) + "]" 
 
     def __iter__(self):
+        '''Iterates over time series values.
+        '''
         for val in self._value:
             yield val
 
     def itervalues(self):
+        '''Returns an iterator over the time series values.
+        '''
         for val in self._value:
             yield val
 
     def itertimes(self):
+        '''Return an iterator over the time series times.
+        '''
         for time in self._key:
             yield time
 
     def iteritems(self):
+        '''Return an iterator over the time series time-value tuple pairs.
+        '''
         time_series = zip(self._key, self._value)
         for item in time_series:
             yield item
 
     def values(self):
+        '''Returns a numpy array of values.
+        '''
         return self._value
 
     def times(self):
+        '''returns a numpy array of times.
+        '''
         return self._key
 
     def items(self):
+        '''Return a list of time-value tuple pairs.
+        '''
         return list(zip(self._key, self._value))
 
     def __contains__(self,val):
