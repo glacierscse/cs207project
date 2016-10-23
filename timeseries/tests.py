@@ -10,11 +10,11 @@ class TestTimeSeries(unittest.TestCase):
             time_series_test = TimeSeries()
 
     #test multiple arguments for constructor 
-    def test_init_multiple_arguments(self):
-        a = [1]
-        b = [2]
-        with self.assertRaises(TypeError):
-            time_series_test = TimeSeries(a,b)
+    def test_two_arguments(self):
+        a = [1,2,3]
+        b = [4.5,12,15] #increasing values?
+
+        TimeSeries(a,b)
 
     #test the input argument for constructor is zero-length
     def test_init_zero_length_argument(self):
@@ -22,10 +22,13 @@ class TestTimeSeries(unittest.TestCase):
         TimeSeries(input)
 
     def test_init_argument(self):
-        input = [1]
+        input = [1,2,3]
         TimeSeries(input)
 
-    #def test_
+    def test_length(self):
+        a = [1,2,3]
+        ts = TimeSeries(a)
+        with self.assertRaises(IndexError)
     #your constructor, which should take one mandatory argument which represents 
     #data to fill the time series instance with. 
     #This argument should be any object that can be treated like a sequence. 
