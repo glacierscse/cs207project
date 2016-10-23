@@ -91,6 +91,16 @@ class TimeSeries:
     def values(self):
         return self._value
 
+    def times(self):
+        return self._key
+
+    def items(self):
+        return list(zip(self._key, self._value))
+
+    def __contains__(self,val):
+        return val in self._value
+
+
     def interpolate(self, inter_time):
         inter_values = []
         for ti in inter_time:
