@@ -25,10 +25,11 @@ class TestTimeSeries(unittest.TestCase):
         input = [1,2,3]
         TimeSeries(input)
 
-    def test_length(self):
-        a = [1,2,3]
-        ts = TimeSeries(a)
-        with self.assertRaises(IndexError)
+    #def test_length(self):
+    #    a = [1,2,3]
+    #    ts = TimeSeries(a)
+    #    with self.assertRaises(IndexError):
+
     #your constructor, which should take one mandatory argument which represents 
     #data to fill the time series instance with. 
     #This argument should be any object that can be treated like a sequence. 

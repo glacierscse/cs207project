@@ -31,9 +31,10 @@ class TimeSeries:
         '''
         self._time_series[index] = value
 
+    
+    '''Return formal string representation of the timeseries data.
+    '''
     @recursive_repr()
-        '''Return formal string representation of the timeseries data.
-        '''
     def __repr__(self):
         class_name = type(self).__name__
         return class_name + '(' + ', '.join(map(repr, self)) + ')'
