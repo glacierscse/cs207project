@@ -1,29 +1,28 @@
-import unittest
+from pytest import raises
 from TimeSeries import TimeSeries
+#import unittest
 
+#class TestTimeSeries(unittest.TestCase):
 
-class TestTimeSeries(unittest.TestCase):
+#test no input argument for constructor
+def test_init_no_argument(self):
+    with raises(TypeError):
+        time_series_test = TimeSeries()
 
-    #test no input argument for constructor
-    def test_init_no_argument(self):
-        with self.assertRaises(TypeError):
-            time_series_test = TimeSeries()
+#test multiple arguments for constructor 
+def test_two_arguments(self):
+    a = [1,2,3]
+    b = [4.5,12,15] #increasing values?
+    TimeSeries(a,b)
 
-    #test multiple arguments for constructor 
-    def test_two_arguments(self):
-        a = [1,2,3]
-        b = [4.5,12,15] #increasing values?
+#test the input argument for constructor is zero-length
+def test_init_zero_length_argument(self):
+    input = []
+    TimeSeries(input)
 
-        TimeSeries(a,b)
-
-    #test the input argument for constructor is zero-length
-    def test_init_zero_length_argument(self):
-        input = []
-        TimeSeries(input)
-
-    def test_init_argument(self):
-        input = [1,2,3]
-        TimeSeries(input)
+def test_init_argument(self):
+    input = [1,2,3]
+    TimeSeries(input)
 
     #def test_length(self):
     #    a = [1,2,3]
@@ -35,5 +34,5 @@ class TestTimeSeries(unittest.TestCase):
     #This argument should be any object that can be treated like a sequence. 
     #The argument can be zero-length, but it can't be omitted.	
 
-if __name__ == '__main__':
-    unittest.main()
+#if __name__ == '__main__':
+#    unittest.main()
