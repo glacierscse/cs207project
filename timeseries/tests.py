@@ -4,30 +4,49 @@ from TimeSeries import TimeSeries
 
 #class TestTimeSeries(unittest.TestCase):
 
-#test no input argument for constructor
+#-------constructor test cases----------
+#test no input argument 
 def test_init_no_argument():
     with raises(TypeError):
-        time_series_test = TimeSeries()
+        TimeSeries()
+        #time_series_test = TimeSeries()
 
-#test multiple arguments for constructor 
-def test_two_arguments():
-    a = [1,2,3]
-    b = [4.5,12,15] #increasing values?
-    TimeSeries(a,b)
-
-#test the input argument for constructor is zero-length
-def test_init_zero_length_argument():
-    input = []
-    TimeSeries(input)
-
+#test one input argument 
 def test_init_argument():
     input = [1,2,3]
     TimeSeries(input)
 
-    #def test_length(self):
-    #    a = [1,2,3]
-    #    ts = TimeSeries(a)
-    #    with self.assertRaises(IndexError):
+#test multiple arguments
+def test_two_arguments():
+    a = [1,2,3]
+    b = [-15,4.5,12] #increasing values?
+    TimeSeries(a,b)
+
+#test the length of the input argument is zero
+def test_init_zero_length_argument():
+    input = []
+    TimeSeries(input)
+
+#test different length arguments
+def test_init_diff_length_argument():
+    a = []
+    b = [1,2,3]
+    with raises(Exception):
+        TimeSeries(a,b)
+
+#-------len test cases----------
+def test_length():
+    a = [1,2,3]
+    ts = TimeSeries(a)
+    assert len(ts) == 3
+
+def test_zero_length():
+    a = []
+    ts = TimeSeries(a)
+    assert len(ts) == 0
+
+#-------getitem test cases----------
+
 
     #your constructor, which should take one mandatory argument which represents 
     #data to fill the time series instance with. 
