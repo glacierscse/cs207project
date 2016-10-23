@@ -1,5 +1,5 @@
 import numbers
-from reprlib import recursive_repr
+import reprlib
 import numpy as np
 import sys
 
@@ -45,14 +45,19 @@ class TimeSeries:
     
     '''Return formal string representation of the timeseries data.
     '''
-    @recursive_repr()
+    #@recursive_repr()
     #not complete
+    #def __repr__(self):
+    #    '''Return formal string representation of the timeseries data.
+    #    '''
+    #    class_name = type(self).__name__
+    #    return class_name + '(' + ', '.join(map(repr, self)) + ')'
     def __repr__(self):
-        '''Return formal string representation of the timeseries data.
-        '''
-        class_name = type(self).__name__
-        return class_name + '(' + ', '.join(map(repr, self)) + ')'
-        
+        time_series = list(zip(self._key, self._value))
+        components = reprlib.repr(time_series)
+        components = components[components.find('['):]
+        return 'TimeSeries({})'.format(components)
+
     def __str__(self):
         limit_len = 5
         len_data = len(self._value)
