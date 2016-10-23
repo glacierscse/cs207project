@@ -193,4 +193,3 @@ class ArrayTimeSeries(TimeSeries):
     #def __setitem__(self, index, pair):
 
 
-
