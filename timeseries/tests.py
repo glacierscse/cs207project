@@ -5,22 +5,22 @@ from TimeSeries import TimeSeries
 #class TestTimeSeries(unittest.TestCase):
 
 #test no input argument for constructor
-def test_init_no_argument(self):
+def test_init_no_argument():
     with raises(TypeError):
         time_series_test = TimeSeries()
 
 #test multiple arguments for constructor 
-def test_two_arguments(self):
+def test_two_arguments():
     a = [1,2,3]
     b = [4.5,12,15] #increasing values?
     TimeSeries(a,b)
 
 #test the input argument for constructor is zero-length
-def test_init_zero_length_argument(self):
+def test_init_zero_length_argument():
     input = []
     TimeSeries(input)
 
-def test_init_argument(self):
+def test_init_argument():
     input = [1,2,3]
     TimeSeries(input)
 
