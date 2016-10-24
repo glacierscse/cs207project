@@ -167,11 +167,10 @@ class TimeSeries:
         else:
             return False
 
-    #@property
-    #def lazy(function):
-    #    def create_thunk(*args, **kwargs):
-    #        return LazyOperation(function, *args, **kwargs)
-    #    return create_thunk
+    @property
+    def lazy(self):
+        identity = lambda x: x
+        return LazyOperation(identity, self)
 
 
 class ArrayTimeSeries(TimeSeries):
