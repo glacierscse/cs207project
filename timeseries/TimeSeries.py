@@ -320,7 +320,7 @@ class TimeSeries:
              true, if the length of TimeSeries is non-zero
              false, if the length of TimeSeries is zero
         """
-        return bool(__len__(self))
+        return bool(len(self))
     
 class ArrayTimeSeries(TimeSeries):
     def __init__(self, time, data):

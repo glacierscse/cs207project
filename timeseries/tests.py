@@ -1,4 +1,5 @@
 import numpy as np
+import math
 from pytest import raises
 from TimeSeries import TimeSeries
 from TimeSeries import ArrayTimeSeries
@@ -313,7 +314,33 @@ def test_init_diff_length_argument():
     with raises(Exception):
         ArrayTimeSeries(time, data)
 
+#-------pos test cases----------
+def test_pos():
+    ts = TimeSeries([4,5,6],[1,2,3])
+    assert +ts == TimeSeries([4,5,6],[1,2,3])
 
+#-------neg test cases----------
+def test_neg():
+    ts = TimeSeries([4,5,6],[1,2,3])
+    assert -ts == TimeSeries([-4,-5,-6],[1,2,3])
+
+#-------abs test cases----------
+def test_abs():
+    ts = TimeSeries([4,5,6],[1,2,3])
+    assert abs(ts) == math.sqrt(77)
+
+#-------bool test cases----------
+def test_bool_true():
+    ts = TimeSeries([4,5,6],[1,2,3])
+    assert bool(ts) 
+
+def test_bool_false():
+    ts = TimeSeries([])
+    assert not bool(ts) 
+
+def test_bool_zero():
+    ts = TimeSeries([0,0,0],[1,2,3])
+    assert bool(ts) 
     #your constructor, which should take one mandatory argument which represents 
     #data to fill the time series instance with. 
     #This argument should be any object that can be treated like a sequence. 
