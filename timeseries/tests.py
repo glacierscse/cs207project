@@ -3,6 +3,17 @@ from TimeSeries import TimeSeries
 #import unittest
 
 #class TestTimeSeries(unittest.TestCase):
+#smoke test
+def smoke_test():
+    threes = TimeSeries(range(0,1000,3))
+    fives = TimeSeries(range(0,1000,5))
+
+    s = 0
+    for i in range(0,1000):
+        if i in threes or i in fives:
+            s += i
+
+    print("sum",s)
 
 #-------constructor test cases----------
 #test no input argument 
@@ -13,41 +24,145 @@ def test_init_no_argument():
 
 #test one input argument 
 def test_init_argument():
-    input = [1,2,3]
-    TimeSeries(input)
+    data = [1,2,3]
+    TimeSeries(data)
 
 #test multiple arguments
 def test_two_arguments():
-    a = [1,2,3]
-    b = [-15,4.5,12] #increasing values?
-    TimeSeries(a,b)
+    data = [1,2,3]
+    time = [-15,4.5,12] #increasing values?
+    TimeSeries(data,time)
 
 #test the length of the input argument is zero
 def test_init_zero_length_argument():
-    input = []
-    TimeSeries(input)
+    data = []
+    TimeSeries(data)
 
 #test different length arguments
 def test_init_diff_length_argument():
-    a = []
-    b = [1,2,3]
+    data = []
+    time = [1,2,3]
     with raises(Exception):
-        TimeSeries(a,b)
+        TimeSeries(data,time)
 
 #-------len test cases----------
 def test_length():
-    a = [1,2,3]
-    ts = TimeSeries(a)
+    data = [1,2,3]
+    ts = TimeSeries(data)
     assert len(ts) == 3
 
 def test_zero_length():
-    a = []
-    ts = TimeSeries(a)
+    data = []
+    ts = TimeSeries(data)
     assert len(ts) == 0
 
 #-------getitem test cases----------
+def test_getitem_range():
+    #input_range = [1,3]#range(1,4,2)
+    data = [0,1,2,3,4]#range(0,5)
+    time = [5,6,7,8,9]#range(5,10)
+    ts = TimeSeries(data, time)
+    assert ts[1:3] == TimeSeries([1,2],[6,7])
 
+def test_getitem_index():
+    data = [0,1,2,3,4]#range(0,5)
+    time = [5,6,7,8,9]#range(5,10)
+    ts = TimeSeries(data, time)
+    assert ts[2] == (7,2)
 
+#-------iter test cases----------
+def test_iter():
+    data = [0,1,2,3,4]#range(0,5)
+    time = [5,6,7,8,9]#range(5,10)
+    ts = TimeSeries(data, time)
+    l = iter(ts)
+    next(l)
+    assert next(l) == 1
+
+#-------itervalues test cases----------
+def test_itervalues():
+    data = [0,1,2,3,4]#range(0,5)
+    time = [5,6,7,8,9]#range(5,10)
+    ts = TimeSeries(data, time)
+    l = ts.itervalues()
+    next(l)
+    assert next(l) == 1
+
+#-------itertimes test cases----------
+def test_itertimes():
+    data = [0,1,2,3,4]#range(0,5)
+    time = [5,6,7,8,9]#range(5,10)
+    ts = TimeSeries(data, time)
+    l = ts.itertimes()
+    next(l)
+    assert next(l) == 6
+
+#-------iteritems test cases----------
+def test_iteritems():
+    data = [0,1,2,3,4]
+    time = [5,6,7,8,9]
+    ts = TimeSeries(data, time)
+    l = ts.iteritems()
+    next(l)
+    assert next(l) == (6,1)
+
+#-------values test cases----------
+def test_values():
+    data = [0,1,2,3,4]#range(0,5)
+    time = [5,6,7,8,9]#range(5,10)
+    ts = TimeSeries(data, time)
+    assert ts.values() == data
+
+#-------times test cases----------
+def test_times():
+    data = [0,1,2,3,4]#range(0,5)
+    time = [5,6,7,8,9]#range(5,10)
+    ts = TimeSeries(data, time)
+    assert ts.times() == time
+
+#-------items test cases----------
+def test_items():
+    data = [0,1,2,3,4]#range(0,5)
+    time = [5,6,7,8,9]#range(5,10)
+    ts = TimeSeries(data, time)
+    assert ts.items() == [(5,0),(6,1),(7,2),(8,3),(9,4)]
+
+#-------contains test cases----------
+def test_contains_no_value():
+    data = [0,1,2,3,4]#range(0,5)
+    time = [5,6,7,8,9]#range(5,10)
+    ts = TimeSeries(data, time)
+    assert not 5 in ts
+
+def test_contains_no_value():
+    data = [0,1,2,3,4]#range(0,5)
+    time = [5,6,7,8,9]#range(5,10)
+    ts = TimeSeries(data, time)
+    assert 3 in ts
+
+#-------contains test cases----------
+def test_interpolate1():
+    ts = TimeSeries([1,2,3], [0,5,10])
+    # Simple cases
+    assert ts.interpolate([1]) == TimeSeries([1.2],[1])
+
+def test_interpolate2():
+    ts = TimeSeries([1,2,3], [0,5,10])
+    # Simple cases
+    assert ts.interpolate([-100,100]) == TimeSeries([1,3],[-100,100])
+
+#def test_interpolate3():???
+#    ts1 = TimeSeries([0,5,10], [1,2,3])
+#    ts2 = TimeSeries([100, -100], [2.5,7.5])
+    # Simple cases
+#    assert ts1.interpolate(ts2.itertimes()).lazy.eval() == TimeSeries([1.5, 2.5],[2.5,7.5])
+    #a.interpolate(b.itertimes()) == TimeSeries([2.5,7.5], [1.5, 2.5])
+
+#-------lazy test cases----------
+def test_lazy():
+    ts = TimeSeries([1,2,3], [0,5,10])
+    # Simple cases
+    assert ts.interpolate([-100,100]).lazy.eval() == TimeSeries([1,3],[-100,100])
     #your constructor, which should take one mandatory argument which represents 
     #data to fill the time series instance with. 
     #This argument should be any object that can be treated like a sequence. 
