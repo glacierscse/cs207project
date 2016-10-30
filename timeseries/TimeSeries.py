@@ -3,15 +3,17 @@ import reprlib
 import numpy as np
 import sys
 from lazy import LazyOperation
+import math
 
 class TimeSeries:
     '''This is the TimeSeries class implemented using Python.
        The TimeSeries class can store time series data.
     '''
     def __init__(self, data, time = None):
-        '''The constructor should take the initial sequence-like data to fill the time series.
-           The sequence-like data can have length 0, but must be given.
-           Time is an optional argument.
+        '''The constructor to initialize a TimeSeries object.
+           Param: 
+             data: the initial sequence-like data to fill the time series. Data can have length 0, but must be given.
+             time: the initial time to fill the time series. Time is an optional argument.
         '''
         ##the time has to be in order when pass in -- precondtion
         len_data = len(data)
@@ -25,12 +27,18 @@ class TimeSeries:
         #self._time_series = list(zip(self._key, self._value))
   
     def __len__(self):
-        '''Get the length of the timeseries data.
+        '''The function to get the length of the TimeSeries.
+           Return: 
+             length of the timeseries data.
         '''
         return len(self._value)
 
     def __getitem__(self,index):
-        '''Get the data at the position specified by index. 
+        '''The function to get a time series item
+           Param:
+             index: int, the position of the item to get.
+           Return:  
+             the data at the position specified by index. 
         '''
         cls = type(self)
         if isinstance(index, slice):
@@ -40,20 +48,19 @@ class TimeSeries:
     
     def __setitem__(self, index, val):
         '''Set the data to the input value at the position specified by index.
+           Param:
+             index: int, the position to set a new value at.
+             val:   the new value.
+           Return:
+             None.
         '''
         #pass in only the value. We can't change the time -- precondition
         self._value[index] = val
 
- 
-    #@recursive_repr()
-    #not complete
-    #def __repr__(self):
-    #    '''Return formal string representation of the timeseries data.
-    #    '''
-    #    class_name = type(self).__name__
-    #    return class_name + '(' + ', '.join(map(repr, self)) + ')'
     def __repr__(self):
-        '''Return formal string representation of the timeseries data.
+        '''The function to return formal string representation of the timeseries data.
+           Return:
+             a string representation of the timeseries data.
         '''
         time_series = list(zip(self._key, self._value))
         components = reprlib.repr(time_series)
@@ -61,9 +68,11 @@ class TimeSeries:
         return 'TimeSeries({})'.format(components)
 
     def __str__(self):
-        '''Return a string representation of the timeseries data.
+        '''The function to return a string representation of the timeseries data.
            If the data length exceed the length limit, 
            the function will present part of the time series.
+           Return:
+             a string representation of the 
         '''
         limit_len = 5
         len_data = len(self._value)
@@ -77,50 +86,79 @@ class TimeSeries:
             return "[" + str_part1 + " ... " + str(time_series[-1]) + "]" 
 
     def __iter__(self):
-        '''Iterates over time series values.
+        '''The function that iterates over time series' values.
+           Return:
+             an iterator of the time series' values.
         '''
         for val in self._value:
             yield val
 
     def itervalues(self):
-        '''Returns an iterator over the time series values.
+        '''The function that iterates over the time series' values.
+           Return:
+             an iterator of the time series' values.
         '''
         for val in self._value:
             yield val
 
     def itertimes(self):
-        '''Return an iterator over the time series times.
-        '''
+        '''The function that iterates over the time series' times.
+           Return:
+             an iterator of the time series' times.
+       '''
         for time in self._key:
             yield time
 
     def iteritems(self):
-        '''Return an iterator over the time series time-value tuple pairs.
+        '''The function that iterates over the time series' time-value tuple pairs.
+           Return:
+             an iterator of the time series' time-value tuple pairs.
         '''
         time_series = zip(self._key, self._value)
         for item in time_series:
             yield item
 
     def values(self):
-        '''Returns a numpy array of values.
+        '''The function to get time series' values.
+           Return:
+              a numpy array of values.
         '''
-        return self._value
+        return np.array(self._value)
 
     def times(self):
-        '''returns a numpy array of times.
+        '''The function to get time series' times.
+           Return:
+             a numpy array of times.
         '''
-        return self._key
+        return np.array(self._key)
 
     def items(self):
-        '''Return a list of time-value tuple pairs.
+        '''The function to get a list of time-value tuple pairs.
+           Return:
+            a list of time series' time-value tuple pairs. 
         '''
         return list(zip(self._key, self._value))
 
     def __contains__(self,val):
+        """The function to check whether a value is in the time series.
+           Param:
+             val: the value to check
+           Return:
+             boolean, whether the value is in the time series.
+        """
         return val in self._value
 
 
     def interpolate(self, inter_time):
+        """for every new time point passed in, compute a value for the TimeSeries class.
+           if a new time point is smaller than the first existing time point, just use the first value; 
+           if a new time point is larger than the last existing time point, use the last value;
+           else take the nearest two time points, draw a line between them, and pick the value at the new time point.
+           Param:
+             inter_time: a sequence-like time points.
+           Return:
+             a TimeSeries object with the input as its time, values as computed by interpolate function. 
+        """
         inter_values = []
         for ti in inter_time:
             if ti < self._key[0]:
@@ -142,6 +180,14 @@ class TimeSeries:
         return result
 
     def _binary_search(self, arr, target):
+        """The private helper function. For a time point, find the nearest two time points.
+           If the new coming time point alreay in the time points, return itself as left nearest and right nearest.
+           Param:
+             arr: the time points that already exist.
+             target: the time point to search neighbors for.
+           Return: 
+             The nearest left and right time points.
+        """
         if len(arr) == 0: 
             return -1 
         lo = 0
@@ -158,6 +204,12 @@ class TimeSeries:
 
 
     def __eq__(self, other):
+        """The function to check whether the new TimeSeries object is the same as the current one.
+           Param:
+             other: the new TimeSeries object to check.
+           Return:
+             boolean, whether two TimeSeries objects are equal.
+        """
         if type(self) != type(other):
             return False
         if len(self) != len(other):
@@ -169,10 +221,107 @@ class TimeSeries:
 
     @property
     def lazy(self):
+        """The function is to change from the lazy decorator on a function 
+           to a property of the TimeSeries CLass. 
+           Use the property to delay the evaluation of an expression of the TimeSeries until 
+           its value is needed.
+           Return:
+             LaayOperation, which can be used to call an eval() of it in order to calculate.
+        """
         identity = lambda x: x
         return LazyOperation(identity, self)
 
+    def _check_time(function):
+        """The function is a decorator function for checking two TimeSeries objects have the same
+           time domain before doing all the arithmetic operations.
+           Param:
+             function: the function use _check_time on
+           Return:
+             ValueError if two objects have different time domain.
+        """
+        def _check_time_helper(self,rhs):
+            if not self._key ==  rhs._key:
+                raise ValueError(str(self)+' and '+str(rhs)+' must have the same time points')
+            return function(self,rhs)
+        return _check_time_helper
+    
+    @_check_time
+    def __add__(self, rhs):
+        """The arithmetic operation function to add two TimeSeries objects elementwise if two 
+           objects have the same time domain, otherwise return a value error
+           Param:
+             rhs: another TimeSeries object
+           Return:
+             The new TimeSeries object that has the same time domain as self and the value is 
+             the addition of rhs's and self's value.
+        """
+        added_value = [self._value[i] + rhs._value[i] for i in range(len(rhs))]
+        return TimeSeries(added_value, self._key)
 
+    @_check_time
+    def __sub__(self,rhs):
+        """The arithmetic operation function to subtract two TimeSeries objects elementwise 
+           if two objects have the same time domain, otherwise return a value error
+           Param:
+             rhs: another TimeSeries object
+           Return:
+             The new TimeSeries object that has the same time domain as self and the value is 
+             self.value-rhs.value.
+        """
+        added_value = [self._value[i] - rhs._value[i] for i in range(len(rhs))]
+        return TimeSeries(added_value, self._key)
+    
+    @_check_time
+    def __mul__(self,rhs):
+        """The arithmetic operation function to multiply two TimeSeries objects elementwise 
+           if two objects have the same time domain, otherwise return a value error
+           Param:
+             rhs: another TimeSeries object
+           Return:
+             The new TimeSeries object that has the same time domain as self and the value 
+             is elementwise self.value*rhs.value.
+        """
+        added_value = [self._value[i] * rhs._value[i] for i in range(len(rhs))]
+        return TimeSeries(added_value, self._key)
+    
+    def __pos__(self):
+        """The uniary operation function to have a new TimeSeries that have the same time
+           domain and value
+           Return:
+             The new TimeSeries object that has the same time and value domain as self
+        """
+        return TimeSeries(self._value, self._key)
+
+    def __neg__(self):
+        """The uniary operation function negative to have a new TimeSeries that have 
+           the same time domain and negative of the self.value.
+           Return:
+             The new TimeSeries object that has the same time and the negative of
+             self.value
+        """
+        neg_value = [-i for i in self._value]
+        return TimeSeries(neg_value, self._key)
+
+    def __abs__(self):
+        """The function that returns the 2-norm of self.value
+           Return:
+             float, the 2-norm of self.value
+        """
+        return math.sqrt(sum([i**2 for i in self._value]))
+ 
+    def __bool__(self):
+        """The function that returns false when the length of self is 0, otherwise true.
+           Used in: a = TimeSeries(...)   
+                    if a: 
+                        ...
+                    else:
+                        ...
+           Return:
+             true, if the length of TimeSeries is non-zero
+             false, if the length of TimeSeries is zero
+        """
+        return bool(__len__(self))
+    
 class ArrayTimeSeries(TimeSeries):
     def __init__(self, time, data):
         if len(time) != len(data):
