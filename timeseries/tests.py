@@ -1,3 +1,4 @@
+import numpy as np
 from pytest import raises
 from TimeSeries import TimeSeries
 from TimeSeries import ArrayTimeSeries
@@ -164,14 +165,14 @@ def test_values():
     data = [0,1,2,3,4]#range(0,5)
     time = [5,6,7,8,9]#range(5,10)
     ts = TimeSeries(data, time)
-    assert ts.values() == data
+    assert all(ts.values() == np.array(data))
 
 #-------times test cases----------
 def test_times():
     data = [0,1,2,3,4]#range(0,5)
     time = [5,6,7,8,9]#range(5,10)
     ts = TimeSeries(data, time)
-    assert ts.times() == time
+    assert all(ts.times() == np.array(time))
 
 #-------items test cases----------
 def test_items():
