@@ -249,6 +249,39 @@ def test_eq_diff_time():
     ts2 = TimeSeries([4, 5, 6], [1, 2, 4])
     assert (ts1 == ts2) == False
  
+#-------add test cases----------------------------------
+# test different length
+def test_add_diff_len():
+    ts1 = TimeSeries([4, 5, 6], [1, 2, 3])
+    ts2 = TimeSeries([4, 5, 6, 7], [1, 2, 3, 4])
+    with raises(ValueError):
+        ts1 + ts2
+
+#test different time domain
+def test_add_diff_time():
+    ts1 = TimeSeries([4, 5, 6], [1, 2, 3])
+    ts2 = TimeSeries([4, 5, 6], [1, 2, 4])
+    with raises(ValueError):
+        ts1 + ts2
+
+#correct case
+def test_add_correct():
+    ts1 = TimeSeries([4, 5, 6], [1, 2, 3])
+    ts2 = TimeSeries([6, 5, 4], [1, 2, 3])
+    assert (ts1 + ts2 == TimeSeries([10, 10, 10], [1, 2, 3]))
+
+#-------sub test cases---------------------------------
+def test_sub_correct():
+    ts1 = TimeSeries([4, 5, 6], [1, 2, 3])
+    ts2 = TimeSeries([6, 5, 4], [1, 2, 3])
+    assert (ts1 - ts2 == TimeSeries([-2, 0, 2], [1, 2, 3]))
+
+#--------mul test cases---------------------------------
+def test_mul_correct():
+    ts1 = TimeSeries([4, 5, 6], [1, 2, 3])
+    ts2 = TimeSeries([6, 5, 4], [1, 2, 3])
+    assert (ts1 * ts2 == TimeSeries([24, 25, 24], [1, 2, 3]))
+
 #-------ArrayTimeSeries constructor test cases----------
 #test no input argument
 def test_init_no_argument():
