@@ -116,7 +116,7 @@ def test_setitem():
     val = 0
     ts[index] = val
     print(ts)
-    assert ts == SMTimeSeries([1,2,3],[4, 5, 6])
+    assert ts == SMTimeSeries([1,2,3],[0, 5, 6])
 
 # index out of range
 def test_setitem_index_error():

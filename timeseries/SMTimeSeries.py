@@ -105,13 +105,9 @@ class SMTimeSeries(SizedContainerTimeSeriesInterface):
       2.0
       >>> ts.std()
       0.81649658092772603
-
-
-
-
-      
-
-
+      >>> ts[0] = 0
+      >>> ts
+      SMTimeSeries([(4.0, 0.0), (5.0, 2.0), (6.0, 3.0)])
 
 
     '''
@@ -187,7 +183,9 @@ class SMTimeSeries(SizedContainerTimeSeriesInterface):
              None.
         '''
         #pass in only the value. We can't change the time -- precondition
-        fileSM.get(self.f_id)[index] = val
+        arrayTS = fileSM.get(self.f_id)
+        arrayTS[index] = val
+        fileSM.store(self.f_id, arrayTS)
 
 
     def __repr__(self):
