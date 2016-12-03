@@ -12,3 +12,11 @@ p7_simsearch/*.pyc
 
 p7_simsearch/*.DS_Store
 
+p7_simsearch/__pycache__/
+
+tsbtreedb/*.pyc
+
+tsbtreedb/*.DS_Store
+
+tsbtreedb/__pycache__/
+
