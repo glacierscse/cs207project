@@ -8,9 +8,7 @@ p7_simsearch/search_res/
 
 p7_simsearch/input_ts.dat
 
-*.pyc
 p7_simsearch/*.pyc
 
-*.DS_Store
 p7_simsearch/*.DS_Store
 
