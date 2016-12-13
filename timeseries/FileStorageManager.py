@@ -53,7 +53,16 @@ class FileStorageManager(StorageManagerInterface):
                        will be store in.
         '''
 		#create a json dict
-		self.dictionary = {}
+
+		if not os.path.exists('timeseriesDB/'):
+			os.makedirs('timeseriesDB/')
+
+		try:
+			json_file = open('timeseriesDB/id.json', 'r')
+			self.dictionary = json.load(json_file)
+		except:
+			self.dictionary = dict()
+
 		self.id_generator = 0
 		self.dir_name = dir_name
 		if not os.path.exists(dir_name):
@@ -68,13 +77,16 @@ class FileStorageManager(StorageManagerInterface):
            Return: 
              t: the timeSeries object that stores into the database.
         '''
-		filename = self.dir_name+"/ts_" + str(id) + ".dat"
+		filename = "../timeseries/"+self.dir_name+"/ts_" + str(id) + ".dat"
 		ts = np.array([t.times(), t.values()], dtype = 'f8')
 		ts_file_dict = {}
 		ts_file_dict[id] = ts.tolist()
 		f = open(filename, "w")
 		f.write(json.dumps(ts_file_dict))
 		f.close()
+		f2 = open("../timeseries/id.json")
+		f2.write(json.dumps(self.dictionary))
+		f2.clos()
 		return t
 
 	def get(self, id):

@@ -1,5 +1,6 @@
 import sys
 sys.path.append('../')
+from timeseries.SMTimeSeries import SMTimeSeries
 
 import os
 import pickle
@@ -15,7 +16,7 @@ j_a, j_b = 1, 50
 @click.command()
 @click.option('-n', default=1000, help='number of ts to generate, default 1000')
 @click.option('--n', default=1000, help='number of ts to generate, default 1000')
-def genTS(n):
+def genTS(n, sm):
 	"""generate n standardized time series, each stored in a file in ts_data/.
 	"""
 	if not os.path.exists('ts_data/'):
@@ -30,5 +31,9 @@ def genTS(n):
 			ts = standardize(tsmaker(m[i], s[i], j[i]))
 			pickle.dump(ts, f)
 
-if __name__ == '__main__':
-	genTS()
+	for i in range(n):
+		ts = tsmaker(m[i], s[i], j[i])
+		smts = SMTimeSeries(ts.times(), ts.values(), sm)
+
+#if __name__ == '__main__':
+#	genTS()

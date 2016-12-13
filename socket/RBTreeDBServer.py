@@ -1,10 +1,11 @@
 from socket import *
-import pickle 
+import pickle
 from _thread import *
 
 import sys
 sys.path.append('../')
-from p7_simsearch import *
+from p7_simsearch.search_engine import searchEngine
+from timeseries.TimeSeries import TimeSeries
 
 
 def clientThread(conn, search_engine):
@@ -26,11 +27,11 @@ def clientThread(conn, search_engine):
 
 
 if __name__ == "__main__":
-	search_engine = find_closest()
+	search_engine = searchEngine()
 	s = socket(AF_INET, SOCK_STREAM)
 	HOST = gethostname()
 	PORT = 15001
-	socket_s.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+	s.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
 	s.bind((HOST, PORT))
     s.listen(5)
     try:

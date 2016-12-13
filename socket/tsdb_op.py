@@ -1,7 +1,8 @@
-import timeseries as ts
-#you will have to come up with an error handling system
-from .tsdb_error import *
-
+from error import *
+from collections import OrderedDict
+import sys
+sys.path.append('../')
+from timeseries.TimeSeries import TimeSeries
 
 # Interface classes for TSDB network operations.
 # These are a little clunky (extensibility is meh), but it does provide strong
@@ -14,11 +15,6 @@ class TSDBOp(dict):
         self['op'] = op
 
     def to_json(self, obj=None):
-        # This is both an interface function and its own helper function.
-        # It recursively converts elements in a hierarchical data structure
-        # into a JSON-encodable form. It does *not* handle class instances
-        # unless they have a 'to_json' method.
-        #print(">>>",self.items())
         if obj is None:
             obj = self
         json_dict = {}
@@ -31,6 +27,11 @@ class TSDBOp(dict):
                 json_dict[k] = v.name
             elif isinstance(v, list):
                 json_dict[k] = [self.to_json(i) for i in v]
+            elif isinstance(v, OrderedDict):    ####### this one seems to be unnecessary. Myra
+                tuples=[]
+                for key in v:
+                    tuples.append((key, self.to_json(v[key])))
+                json_dict[k] = OrderedDict(tuples)
             elif isinstance(v, dict):
                 json_dict[k] = self.to_json(v)
             elif hasattr(v, 'to_json'):
@@ -48,16 +49,6 @@ class TSDBOp(dict):
         return typemap[json_dict['op']].from_json(json_dict)
 
 
-class TSDBOp_withTS(TSDBOp):
-    def __init__(self, ts):
-        super().__init__('with_ts')
-        self['ts'] = ts
-
-    @classmethod
-    def from_json(cls, json_dict):
-        return cls(ts.TimeSeries(*(json_dict['ts'])))
-
-
 class TSDBOp_Return(TSDBOp):
 
     def __init__(self, status, op, payload=None):
@@ -65,12 +56,34 @@ class TSDBOp_Return(TSDBOp):
         self['status'], self['payload'] = status, payload
 
     @classmethod
-    def from_json(cls, json_dict):  #should not be used, this is to return to client
+    def from_json(cls, json_dict):
         return cls(json_dict['status'], json_dict['payload'])
 
-class TSDBOp_withID(TSDBOp):
+# Myra
+class TSDBOp_Simquery_WithID(TSDBOp):
+    def __init__(self, idee):       ######**kwargs
+        super().__init__('simquery_id')
+        self['id'] = idee
+
+    @classmethod
+    def from_json(cls, json_dict):
+        return cls(json_dict['id'], n=json_dict['n'])
+
+#Myra
+class TSDBOp_Simquery_WithTS(TSDBOp):
+    def __init__(self, ts):
+        super().__init__('simquery_ts')
+        self['ts'] = ts
+
+    @classmethod
+    def from_json(cls, json_dict):
+        return cls(ts.TimeSeries(*(json_dict['ts'])), n=json_dict['n'])
+
+
+#Myra
+class TSDBOp_GetTS_WithID(TSDBOp):
     def __init__(self, idee):
-        super().__init__('with_id')
+        super().__init__('get_id')
         self['id'] = idee
 
     @classmethod
@@ -82,6 +95,7 @@ class TSDBOp_withID(TSDBOp):
 
 # This simplifies reconstructing TSDBOp instances from network data.
 typemap = {
-  'with_ts': TSDBOp_withTS,
-  'with_id': TSDBOp_withID,
+    'simquery_ts': TSDBOp_Simquery_WithTS,
+    'simquery_id': TSDBOp_Simquery_WithID,
+    'get_id': TSDBOp_GetTS_WithID
 }

@@ -7,7 +7,7 @@ sys.path.append('/'.join(ts_dir))
 from timeseries.FileStorageManager import *
 import numbers
 import reprlib
-fileSM = FileStorageManager("timeseriesDB")
+#fileSM = FileStorageManager("timeseriesDB")
 from timeseries.lazy import LazyOperation
 
 
@@ -112,7 +112,7 @@ class SMTimeSeries(SizedContainerTimeSeriesInterface):
 
     '''
     
-    def __init__(self, time, data, id = None):
+    def __init__(self, time, data, fileSM, id = None):
         '''The constructor to initialize a SMTimeSeries object.
            Param: 
              data: the initial sequence-like data to fill the time series. Data can have length 0, but must be given.
@@ -121,23 +121,24 @@ class SMTimeSeries(SizedContainerTimeSeriesInterface):
         '''
         # No id is provided, we need to generate an id
         self.f_id = None
+        self.fileSM = fileSM
         if id is None:
-            while fileSM.id_generator in fileSM.dictionary:
-                fileSM.id_generator += 1
-            self.f_id = fileSM.id_generator
-            fileSM.dictionary[self.f_id] = 1      
+            while self.fileSM.id_generator in self.fileSM.dictionary:
+                self.fileSM.id_generator += 1
+            self.f_id = self.fileSM.id_generator
+            self.fileSM.dictionary[self.f_id] = 1      
         # id is provided          
         else:
             # if the id is already in the dictionary, raise an exception.
-            if id in fileSM.dictionary:
+            if id in self.fileSM.dictionary:
                 raise Exception('This id has already been used, please choose another one.')
             # if the id is NOT in the dictionary, use this one.
             else:
                 self.f_id = id
-                fileSM.dictionary[self.f_id] = 1 
+                self.fileSM.dictionary[self.f_id] = 1 
              
         arrayTS = ArrayTimeSeries(time, data)
-        fileSM.store(self.f_id, arrayTS)
+        self.fileSM.store(self.f_id, arrayTS)
 
 
     @classmethod
@@ -149,7 +150,7 @@ class SMTimeSeries(SizedContainerTimeSeriesInterface):
               SMTimeSeries read from file.
         '''
         #exception throw in fileSM
-        arrayTS = fileSM.get(id)
+        arrayTS = self.fileSM.get(id)
         return SMTimeSeries(arrayTS.times(), arrayTS.values())
 
 
@@ -158,7 +159,7 @@ class SMTimeSeries(SizedContainerTimeSeriesInterface):
            Return: 
              length of the timeseries data.
         '''
-        return len(fileSM.get(self.f_id))
+        return len(self.fileSM.get(self.f_id))
 
     def __getitem__(self, index):
         '''The function to get a time series item
@@ -169,10 +170,10 @@ class SMTimeSeries(SizedContainerTimeSeriesInterface):
         '''
         cls = type(self)
         if isinstance(index, slice):
-            arrayTS = fileSM.get(self.f_id)[index]
+            arrayTS = self.fileSM.get(self.f_id)[index]
             return cls(arrayTS.times(), arrayTS.values())
         elif isinstance(index, numbers.Integral):
-            return fileSM.get(self.f_id)[index]
+            return self.fileSM.get(self.f_id)[index]
     
     def __setitem__(self, index, val):
         '''Set the data to the input value at the position specified by index.
@@ -183,9 +184,9 @@ class SMTimeSeries(SizedContainerTimeSeriesInterface):
              None.
         '''
         #pass in only the value. We can't change the time -- precondition
-        arrayTS = fileSM.get(self.f_id)
+        arrayTS = self.fileSM.get(self.f_id)
         arrayTS[index] = val
-        fileSM.store(self.f_id, arrayTS)
+        self.fileSM.store(self.f_id, arrayTS)
 
 
     def __repr__(self):
@@ -193,7 +194,7 @@ class SMTimeSeries(SizedContainerTimeSeriesInterface):
            Return:
              a string representation of the timeseries data.
         '''
-        smTS = fileSM.get(self.f_id)
+        smTS = self.fileSM.get(self.f_id)
         time_series = list(zip(smTS._key, smTS._value))
         components = reprlib.repr(time_series)
         components = components[components.find('['):]
@@ -209,7 +210,7 @@ class SMTimeSeries(SizedContainerTimeSeriesInterface):
              a string representation of the SMTimeSeries.
         '''
 
-        return fileSM.get(self.f_id).__str__()
+        return self.fileSM.get(self.f_id).__str__()
 
 
     def __iter__(self):
@@ -218,7 +219,7 @@ class SMTimeSeries(SizedContainerTimeSeriesInterface):
              an iterator of the time series' values.
         '''
 
-        return fileSM.get(self.f_id).__iter__()
+        return self.fileSM.get(self.f_id).__iter__()
 
 
     def itervalues(self):
@@ -226,7 +227,7 @@ class SMTimeSeries(SizedContainerTimeSeriesInterface):
            Return:
              an iterator of the time series' values.
         '''
-        return fileSM.get(self.f_id).itervalues()
+        return self.fileSM.get(self.f_id).itervalues()
 
 
     def itertimes(self):
@@ -234,7 +235,7 @@ class SMTimeSeries(SizedContainerTimeSeriesInterface):
            Return:
              an iterator of the time series' times.
         '''
-        return fileSM.get(self.f_id).itertimes()
+        return self.fileSM.get(self.f_id).itertimes()
 
 
     def iteritems(self):
@@ -242,7 +243,7 @@ class SMTimeSeries(SizedContainerTimeSeriesInterface):
            Return:
              an iterator of the time series' time-value tuple pairs.
         '''
-        return fileSM.get(self.f_id).iteritems()
+        return self.fileSM.get(self.f_id).iteritems()
 
 
     def values(self):
@@ -250,21 +251,21 @@ class SMTimeSeries(SizedContainerTimeSeriesInterface):
            Return:
               a numpy array of values.
         '''
-        return fileSM.get(self.f_id).values()
+        return self.fileSM.get(self.f_id).values()
 
     def times(self):
         '''The function to get time series' times.
            Return:
              a numpy array of times.
         '''
-        return fileSM.get(self.f_id).times()
+        return self.fileSM.get(self.f_id).times()
 
     def items(self):
         '''The function to get a list of time-value tuple pairs.
            Return:
             a list of time series' time-value tuple pairs. 
         '''
-        return fileSM.get(self.f_id).items()
+        return self.fileSM.get(self.f_id).items()
 
     def __contains__(self,val):
         '''The function to check whether a value is in the time series.
@@ -274,7 +275,7 @@ class SMTimeSeries(SizedContainerTimeSeriesInterface):
              boolean, whether the value is in the time series.
         '''
 
-        return val in fileSM.get(self.f_id)
+        return val in self.fileSM.get(self.f_id)
 
 
     def interpolate(self, inter_time):
@@ -287,7 +288,7 @@ class SMTimeSeries(SizedContainerTimeSeriesInterface):
            Return:
              a SMTimeSeries object with the input as its time, values as computed by interpolate function. 
         '''
-        arrayTS = fileSM.get(self.f_id).interpolate(inter_time)
+        arrayTS = self.fileSM.get(self.f_id).interpolate(inter_time)
         return SMTimeSeries(arrayTS.times(), arrayTS.values())
 
     def __eq__(self, other):
@@ -299,7 +300,7 @@ class SMTimeSeries(SizedContainerTimeSeriesInterface):
         '''
         if type(self) != type(other):
             return False
-        return fileSM.get(self.f_id) == fileSM.get(other.f_id)
+        return self.fileSM.get(self.f_id) == self.fileSM.get(other.f_id)
  
 
     def __add__(self, rhs):
@@ -311,7 +312,7 @@ class SMTimeSeries(SizedContainerTimeSeriesInterface):
              The new SMTimeSeries object that has the same time domain as self and the value is 
              the addition of rhs's and self's value.
         '''
-        arrayTS = fileSM.get(self.f_id) + fileSM.get(rhs.f_id)
+        arrayTS = self.fileSM.get(self.f_id) + self.fileSM.get(rhs.f_id)
         return SMTimeSeries(arrayTS.times(), arrayTS.values())
 
     def __sub__(self,rhs):
@@ -323,7 +324,7 @@ class SMTimeSeries(SizedContainerTimeSeriesInterface):
              The new SMTimeSeries object that has the same time domain as self and the value is 
              self.value-rhs.value.
         '''
-        arrayTS = fileSM.get(self.f_id) - fileSM.get(rhs.f_id)
+        arrayTS = self.fileSM.get(self.f_id) - self.fileSM.get(rhs.f_id)
         return SMTimeSeries(arrayTS.times(), arrayTS.values())
     
     def __mul__(self,rhs):
@@ -335,7 +336,7 @@ class SMTimeSeries(SizedContainerTimeSeriesInterface):
              The new SMTimeSeries object that has the same time domain as self and the value 
              is elementwise self.value*rhs.value.
         '''
-        arrayTS = fileSM.get(self.f_id) * fileSM.get(rhs.f_id)
+        arrayTS = self.fileSM.get(self.f_id) * self.fileSM.get(rhs.f_id)
         return SMTimeSeries(arrayTS.times(), arrayTS.values())
     
     def __pos__(self):
@@ -344,7 +345,7 @@ class SMTimeSeries(SizedContainerTimeSeriesInterface):
            Return:
              The new SMTimeSeries object that has the same time and value domain as self
         '''
-        arrayTS = fileSM.get(self.f_id)
+        arrayTS = self.fileSM.get(self.f_id)
         return SMTimeSeries(arrayTS.times(), arrayTS.values())
 
 
@@ -355,7 +356,7 @@ class SMTimeSeries(SizedContainerTimeSeriesInterface):
              The new SMTimeSeries object that has the same time and the negative of
              self.value
         '''
-        arrayTS = -fileSM.get(self.f_id)
+        arrayTS = -self.fileSM.get(self.f_id)
         return SMTimeSeries(arrayTS.times(), arrayTS.values())
 
     def __abs__(self):
@@ -363,7 +364,7 @@ class SMTimeSeries(SizedContainerTimeSeriesInterface):
            Return:
              float, the 2-norm of self.value
         '''
-        return abs(fileSM.get(self.f_id))
+        return abs(self.fileSM.get(self.f_id))
  
     def __bool__(self):
         '''The function that returns false when the length of self is 0, otherwise true.
@@ -376,21 +377,21 @@ class SMTimeSeries(SizedContainerTimeSeriesInterface):
              true, if the length of SMTimeSeries is non-zero
              false, if the length of SMTimeSeries is zero
         '''
-        return bool(fileSM.get(self.f_id))
+        return bool(self.fileSM.get(self.f_id))
   
     def mean(self):
         '''The function that returns the mean of the time series.
            Return:
              the mean of the time series data. 
         '''        
-        return fileSM.get(self.f_id).mean()
+        return self.fileSM.get(self.f_id).mean()
 
     def std(self):
         '''The function that returns the standard deviation of the time series data.
            Return:
              the standard deviation of the time series data.
         '''
-        return fileSM.get(self.f_id).std()
+        return self.fileSM.get(self.f_id).std()
 
 
 

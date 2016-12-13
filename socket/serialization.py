@@ -9,15 +9,15 @@ def serialize(json_obj):
     end of the wire.'''
     #your code here
     try:
-        j_obj = json.dumps(json_obj)
+        #j_obj = json.dumps(json_obj)
         #encode the information
-        encode_obj = j_obj.encode()
+        encode_obj = json_obj.encode()
         #length of the information
-        string_len = len(encode_obj)+LENGTH_FIELD_LENGTH
-        encoded_string_len = string.to_bytes(LENGTH_FIELD_LENGTH, byteorder = 'little')
+        string_len = len(encode_obj)
+        encoded_string_len = int.to_bytes(string_len+LENGTH_FIELD_LENGTH,LENGTH_FIELD_LENGTH, byteorder = 'little')
         return encoded_string_len+encode_obj
     except:
-        print('Invalid JSON object received:\n'+str(json_str))
+        print('Invalid JSON object received:\n'+str(json_obj))
         return None
 
 
