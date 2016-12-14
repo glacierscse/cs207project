@@ -27,14 +27,14 @@ class TSDB_Server(socketserver.BaseRequestHandler):
 
 
 	def run(self):
-		pool = ThreadPoolExecutor(1)
+		pool = ThreadPoolExecutor(12)
 		sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 		sock.bind(self.addr)
-		sock.listen(1)
+		sock.listen(5)
 		
 		while True:
-			print("Connecting...")
+			print("Connecting...")                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
 			client_sock, client_addr = sock.accept()
 			pool.submit(self.echo_client, client_sock, client_addr)
 
@@ -42,7 +42,7 @@ class TSDB_Server(socketserver.BaseRequestHandler):
 	def echo_client(self, socket, client_addr):
 		print('Got connection from', client_addr) 
 		while True:
-			msg = socket.recv(1024)
+			msg = socket.recv(8192)
 			if not msg:
 				break
 			result = self.data_received(msg)
@@ -77,8 +77,10 @@ class TSDB_Server(socketserver.BaseRequestHandler):
 				elif isinstance(op, TSDBOp_GetTS_WithID):
 					print("TS")
 					response = self._getts_with_id(op)
+					print("response", response)
 				else:
 					response = TSDBOp_Return(TSDBStatus.UNKNOWN_ERROR, op['op'])
+			print(type(response))
 			print(response.to_json())
 			print(type(response.to_json()))
 			print("----")
@@ -104,11 +106,14 @@ class TSDB_Server(socketserver.BaseRequestHandler):
 
 	def _getts_with_id(self, op):
 		ts = self.rbdb.getts_with_id(op['id'],self.smdb)
-		ts_list = [list(ts.times()), list(ts.values())]
+		ts_list = [{"times":list(ts.times())}, {"values":list(ts.values())}]
 		print(ts_list)
+		print("my result before op")
 		result = TSDBOp_GetTS_WithID('get_id')  
-		print(result)
+		result['id'] = op['id']
 		result['ts'] = ts_list
+		print("type", type(ts_list))
+		print("result",result)
 		return result
 
 if __name__ == '__main__':
