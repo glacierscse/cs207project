@@ -5,7 +5,7 @@ import os
 import random
 import pickle
 
-from calculateDistance import calcDist, standardize
+from p7_simsearch.calculateDistance import calcDist, standardize
 from tsbtreedb import *
 import click
 
